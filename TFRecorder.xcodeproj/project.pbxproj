@@ -15,6 +15,7 @@
 		5B27E6B124CAD5D100EE5F2B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B27E6B024CAD5D100EE5F2B /* main.m */; };
 		5B27E6BB24CAD5D100EE5F2B /* TFRecorderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B27E6BA24CAD5D100EE5F2B /* TFRecorderTests.m */; };
 		5B27E6C624CAD5D100EE5F2B /* TFRecorderUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B27E6C524CAD5D100EE5F2B /* TFRecorderUITests.m */; };
+		5B7427BC24DCB6FD00A9B437 /* TFRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7427BB24DCB6FD00A9B437 /* TFRecorder.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,8 @@
 		5B27E6C124CAD5D100EE5F2B /* TFRecorderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TFRecorderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B27E6C524CAD5D100EE5F2B /* TFRecorderUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TFRecorderUITests.m; sourceTree = "<group>"; };
 		5B27E6C724CAD5D100EE5F2B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5B7427BA24DCB6FD00A9B437 /* TFRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TFRecorder.h; sourceTree = "<group>"; };
+		5B7427BB24DCB6FD00A9B437 /* TFRecorder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TFRecorder.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +108,7 @@
 				5B27E6A224CAD5CD00EE5F2B /* AppDelegate.m */,
 				5B27E6A424CAD5CD00EE5F2B /* ViewController.h */,
 				5B27E6A524CAD5CD00EE5F2B /* ViewController.m */,
+				5B7427B924DCB6D100A9B437 /* TFRecorder */,
 				5B27E6A724CAD5CD00EE5F2B /* Main.storyboard */,
 				5B27E6AA24CAD5D100EE5F2B /* Assets.xcassets */,
 				5B27E6AC24CAD5D100EE5F2B /* LaunchScreen.storyboard */,
@@ -130,6 +134,15 @@
 				5B27E6C724CAD5D100EE5F2B /* Info.plist */,
 			);
 			path = TFRecorderUITests;
+			sourceTree = "<group>";
+		};
+		5B7427B924DCB6D100A9B437 /* TFRecorder */ = {
+			isa = PBXGroup;
+			children = (
+				5B7427BA24DCB6FD00A9B437 /* TFRecorder.h */,
+				5B7427BB24DCB6FD00A9B437 /* TFRecorder.m */,
+			);
+			path = TFRecorder;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -265,6 +278,7 @@
 				5B27E6A624CAD5CD00EE5F2B /* ViewController.m in Sources */,
 				5B27E6B124CAD5D100EE5F2B /* main.m in Sources */,
 				5B27E6A324CAD5CD00EE5F2B /* AppDelegate.m in Sources */,
+				5B7427BC24DCB6FD00A9B437 /* TFRecorder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
