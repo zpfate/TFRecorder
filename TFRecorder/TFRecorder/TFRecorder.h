@@ -12,8 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TFRecorder : NSObject
 
-- (BOOL)checkRecordPermission;
+/// 检测录音权限
++ (BOOL)checkRecordPermission;
 
+/// 录音文件保存地址
++ (NSString *)soundFileDefaultPath;
 
 @end
 

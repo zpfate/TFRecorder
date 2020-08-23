@@ -25,25 +25,74 @@
     return self;
 }
 
-/// 监测录音权限
-- (BOOL)checkRecordPermission {
+/// 请求权限
++ (BOOL)checkRecordPermission {
     
-    __block BOOL canRecord = YES;
+    __block BOOL authorized = NO;
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
-    if (status == AVAuthorizationStatusNotDetermined) {
+    if (status == AVAuthorizationStatusAuthorized) {
+        
+        authorized = YES;
+    } else if (status == AVAuthorizationStatusDenied) {
+        
+        // 拒绝
+        authorized = NO;
+    } else if (status == AVAuthorizationStatusRestricted) {
+        
+        authorized = NO;
+    } else if (status == AVAuthorizationStatusNotDetermined) {
+        
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         AVAudioSession *session = [AVAudioSession sharedInstance];
         [session requestRecordPermission:^(BOOL granted) {
-            canRecord = granted;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                authorized = granted;
+                dispatch_semaphore_signal(semaphore);
+            });
         }];
-    } else if (status == AVAuthorizationStatusDenied || AVAuthorizationStatusRestricted) {
-        canRecord = NO;
-    } else {
-        canRecord = YES;
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     }
-    return YES;
+    return authorized;
 }
 
-- (void)sessionSettings {
+
+- (void)startRecording {
+    
+    NSURL *fileUrl = [NSURL fileURLWithPath:[self soundFileDefaultPath]];
+    NSError *err;
+    NSDictionary *settings = [self recordSettings];
+    self.recorder = [[AVAudioRecorder alloc] initWithURL:fileUrl settings:settings error:&err];
+    
+    /// 开启表盘绘制分贝数
+    self.recorder.meteringEnabled = YES;
+    
+    /// 设置音频录制的长度
+    [_recorder recordForDuration:0];
+    
+    [self.recorder prepareToRecord];
+    /// 开始录制
+    [self.recorder record];
+    
+}
+
+- (NSDictionary *)recordSettings {
+    
+    NSMutableDictionary *settings = [NSMutableDictionary dictionary];
+    /// 录音格式
+    [settings setObject:@(kAudioFormatLinearPCM) forKey:AVFormatIDKey];
+    /// 采样率,影响音频的质量
+    [settings setObject:@(8000.f) forKey:AVSampleRateKey];
+    /// 录音通道1或2, 需要转换成mp3格式则必须要设置双通道
+    [settings setObject:@(2) forKey:AVNumberOfChannelsKey];
+    /// 录音质量
+    [settings setObject:@(AVAudioQualityHigh) forKey:AVEncoderAudioQualityKey];
+    /// 线性采样位数  8、16、24、32
+    [settings setObject:[NSNumber numberWithInt:16] forKey:AVLinearPCMBitDepthKey];
+    return settings;
+}
+
+/// 会话设置
+- (void)setupSession {
     
     /// 用来管理APP对音频硬件(扬声器 麦克风)的使用
     /// 获取会话单例
@@ -52,13 +101,24 @@
     NSError *sessionErr;
     [session setCategory:AVAudioSessionCategoryPlayAndRecord error:&sessionErr];
     NSAssert(sessionErr, sessionErr.description);
-    
     NSError *activeErr;
     /// 激活
     [session setActive:YES error:&activeErr];
     NSAssert(activeErr, activeErr.description);
 }
 
-- (void)soundFilPath
+/// 默认存储地址
+- (NSString *)soundFileDefaultPath {
+    
+    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *dir = [cachePath stringByAppendingPathComponent:@"soundFile"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:dir]) {
+        NSError *err;
+        [[NSFileManager defaultManager] createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:&err];
+    }
+    NSString *fileName = [NSString stringWithFormat:@"record-%.2f", [[NSDate date] timeIntervalSince1970]];
+    NSString *path = [dir stringByAppendingPathComponent:fileName];
+    return path;
+}
 
 @end
