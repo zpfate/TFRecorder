@@ -26,12 +26,7 @@
 
 - (IBAction)testAction:(id)sender {
     
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    dispatch_async(dispatch_queue_create("queue", 0), ^{
-        sleep(3);
-        dispatch_semaphore_signal(semaphore);
-    });
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    
 }
 
 @end

@@ -34,47 +34,50 @@
         
         authorized = YES;
     } else if (status == AVAuthorizationStatusDenied) {
-        
         // 拒绝
         authorized = NO;
     } else if (status == AVAuthorizationStatusRestricted) {
         
         authorized = NO;
     } else if (status == AVAuthorizationStatusNotDetermined) {
-        
+        /// 第一次申请录音权限
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         AVAudioSession *session = [AVAudioSession sharedInstance];
         [session requestRecordPermission:^(BOOL granted) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                authorized = granted;
-                dispatch_semaphore_signal(semaphore);
-            });
+            authorized = granted;
+            dispatch_semaphore_signal(semaphore);
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     }
     return authorized;
 }
 
-
+/// 开始录制
 - (void)startRecording {
     
-    NSURL *fileUrl = [NSURL fileURLWithPath:[self soundFileDefaultPath]];
+    NSURL *fileUrl = [NSURL fileURLWithPath:[self recordFilePath]];
     NSError *err;
     NSDictionary *settings = [self recordSettings];
     self.recorder = [[AVAudioRecorder alloc] initWithURL:fileUrl settings:settings error:&err];
-    
     /// 开启表盘绘制分贝数
     self.recorder.meteringEnabled = YES;
-    
     /// 设置音频录制的长度
     [_recorder recordForDuration:0];
-    
+    /// 准备录制,把录音文件加载缓冲区
     [self.recorder prepareToRecord];
-    /// 开始录制
+    /// 开始录制或者继续录制
     [self.recorder record];
-    
 }
 
+- (void)pauseRecording {
+    [self.recorder pause];
+}
+
+- (void)stopRecording {
+    [self.recorder stop];
+}
+
+/// 录音设置
 - (NSDictionary *)recordSettings {
     
     NSMutableDictionary *settings = [NSMutableDictionary dictionary];
@@ -108,7 +111,7 @@
 }
 
 /// 默认存储地址
-- (NSString *)soundFileDefaultPath {
+- (NSString *)recordFilePath {
     
     NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
     NSString *dir = [cachePath stringByAppendingPathComponent:@"soundFile"];

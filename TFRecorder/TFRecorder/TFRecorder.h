@@ -14,9 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 检测录音权限
 + (BOOL)checkRecordPermission;
-
+/// 开始录制
+- (void)startRecording;
+/// 暂停录制
+- (void)pauseRecording;
+/// 停止录制
+- (void)stopRecording;
 /// 录音文件保存地址
-+ (NSString *)soundFileDefaultPath;
+- (NSString *)recordFilePath;
 
 @end
 
